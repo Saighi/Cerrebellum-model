@@ -1,0 +1,82 @@
+Ok so I have an important theoretical/computational neuroscience project in mind.
+
+Here is the idea.
+
+We don't understand the cerrebellum from a mechanistical point. 
+The Parallel fibers CC->DCN->IO circuit with is pecculiar plasticity scheme seems 
+to do ITS OWN THING without carring about the complex model computed from the cortex.
+
+Seems like the cerebellum is a big machinery that mostly care about finding the right 
+activity/plasticity pattern to inhibit the IO. But despite that the cerrebellum seem to be able to QUICKLY, on the fly correct mouvement.
+
+To understand that you have to know the plasticity rule and the type of neurons (inhbitory/excitatory) which constitute this circuit. And also to know that even if 
+parallel fibers and DCN contains input from the cortex they don't seem to have to be directly piloted from the cortex in a precise manner for the magic to happen. Taking for exemple the core computational node of the cerrebellum, the CC and its parallel fibers, it takes input from the cortex but does its own thing with it, it is not the cortex that say at this right moment this purkinje cell will fire to optimize behavioral output. It is more like purkinje cell listen the cortex and take a decision based on this signal. And this decision seem to be sculpted by the local plasticity induced by the IO.
+And even if the cortex would be able to pilot the cerrebellum in a more active way, it will defeat the whole purposes of having a cerrebellum in the first place, which is to do quick on the spot computations that the cortex is not able to do as fast as precisely. the cerrebellum cortex being so close to the spinal chord and having fewer relay than the motor cortex to compute both plasticity and activity is another clue. So yeah this is for the fuctional argument. the cerrebellum cortex being so close
+
+ok now that you have the background lets go for my mechanistical account. 
+
+So we have to main input to the spinal chord, the cortex and the cerebellar cortex.
+
+Let say the cortex is a big deep network with a model of the world that refine more slowly than the cerebellum cortex and takes more time to compute the necessary feedback loop responsible for behavior refinement.
+
+the cerrebelar cortex is different, it is a quick feedback loop which have a "large but shallow" predictive model of the world. 
+
+what I want to show is that as long as the cerrebellum is ALIGNED with the wants of the cortex (because at the end he is the one who knows), solving quickly internal contradictions is the only necessary thing to corect small deviation between the outputed behavior/state of the world and the desired behavior/state of the world.
+
+How ? I have my idea but I will need numérical simulations to investigate it.
+
+what is the idea, is based on a phenomenon that I could called target alignement for the activity side and gradient alignement for the learning side.
+
+What are these phenomenons ? lets make a thought experiment.
+
+Let say we have the cortex outputting teaching signals in the spinal chord which indicate which neuron should have which activity at each moment. In real biology it would not be just teaching signal but row signal that could be used to teach synapses from the cerrebellum but let SIMPLIFY it. So the cortex compute a bit slowly these signals (that could be used as row signal) based on sensory and motor and internal model feedback. good. 
+If the cortex has enough precise past data it can compensate for the delay, but here is the catch, it doesn't. There is allways small deviations, sensory, and motor, and mechanistical (muscles not having the exact right output or whatever) that allways deviate the behavior from "the right behavior" and the cortex can only wait for these deviations to be old enough or compound enough to correct the behavior. This is not good for an agent that relies on instantaneous precision for survival.
+
+We then need a second module able to operate quickly all these corrections, this is where the cerrebellum intervene.
+
+So lets go back to the teaching signal from the neocortex, what does it teach ? Following this simplification that the cortex only output a teaching signal the logical conclusion is that it teaches the synapses directly outputed by the last computational stage of the cerrebelar cortex. Which are synapses comming from the DCN.
+So in this simplified model the cerrebellum is the only instantaneous pilot and the cortex a remote pilot.
+
+Ok so what it means is that the spinal chord neurons will learn to use whatever is outputed by the DCN to generate the right motor command at the right time.
+
+Now, how alignement happens. lets go in the mechanical details.
+for the cortex we have a deep network with sensory inputs, past motor inputs, maybe proprioceptive inputs, and backprop to train the whole rather classical.
+
+For the cerrebelum as a whole it is slighly more exotic.
+normally we could deal with that only with local plasticity, and I have my ideas, the circuit is closely mapped so it should be possible.
+So in terms of architecture :
+
+The cerrebelar cortex would be a large population of neurons receiving all to all connections from many inputs. This is a large simplification but we will rely on backprop to make structure emerge in this population. the inputs are : sensory inputs very important, motor outputs also, proprioceptive inputs if we have them in the model and potentially if we simulate the cortex as a deep network, inputs taken at various stages of this deep network (we can check actual neurological date if we want to be precise on the stages). 
+
+The DCN is a smaller population but still high dimensional.
+For the DCN we have similar inputs but to simplify the model synapses going to the DCN from these various inputs wont be plastic, to induce differentiation we will have various random weights projecting on this population. It will still be all to all inputs but the random weights with the adequate variability will induce a code spacific to any states. maybe we can even make connectivity sparse to improve code differentiation between different states. Of course the DCN is contacted by the whole CC via all to all plastic connections which will differenciate due to backpropagation.
+
+The IO will have a very similar connection scheme from similar inputs as the CC and the DCN with also code varying due to stochasticity in synapse weights. Of course the IO is contacted by all to all plastic synapses which will differenciate due to backprop.
+
+The DCN output to the spinal chorde with plastci synapses which will not backprop but target fitting plasticity with the target setted by the cortex as told before.
+
+Now for the backprop, this is the most important part. During behavioral tasks the backprop will operate continuously at each time step going from the parralel fibers (connected to the inputs) all the way to the IO. Backprop will have one main objective function, inhibiting the activity in the IO (keeping it to 0) at each moment in time. This backprop target is the key of the whole system.
+
+Here is the conceptual non trivial part that I have to explain well. An example, which will also be what I will implement in code is more than welcomed to explain the behavior. 
+
+So lets take a simple behavioral task. we have a ball in a two D space which has to reach a random point in space that we have drawn. Our cortex can controle the acceleration on the x and y axis to do so. the cortex have acces to the ball position (sensory) to its position in space and the velocity of the ball and maybe the acceleration (proprioceptive) and thats it I guess it is enough for this simple task. the ball which is our body has a masse, we don't have frition right now, and that's it. Now let say the cortex has learned in a way (genetical algorithm/ reinforcement learning, whatever) to make the right trajectory to put the ball in the pit from any starting point. This should be easily possible through existing algorithm.
+
+now let say that we plug the cortex to the spinal chord where are the cerrebelar outputs. Then we train the Cerrebelum/spinal chord neurons through two dynamics which takes place AT THE SAME TIME. On one side we train the spinal chord neurons to read the DCN output to reproduce the right cortex output. The spinal chord read the DCN the right way. At the same time we train the cerrebellum to cancel whatever IO activity there is using backpropagation. We will also make the spinal chord learning slower than the cerebellar learning through backprop.
+This will induce interferences as the DCN code will change during the time the spinal chord learn. But these interferences inducing kind of random mouvement but not really wont hinder the Cerebellum to map itself through backpropagation. Even better the more the mouvements are random, the more the cerrebellum can learn to map the IO in various situations and therefor we will see the DCN code stabilize even if the behavior is not the right one, as the cerebellum learns an agnostic predictive model of its internal activity. 
+
+Ok now we are at equilibrium, the whole system is able to output the right behavior from the cerrebellum output. Fine we have found an overcomplicated way to make what the cortex was able to do alone. But here is where magic happens (maybe).
+Let say now we operate in a regime where the cortex is frozen AND spinal chord learning is frozen. lets also froze the cerrebellum learning in this first scenario to only observe what I coined the target alignement phenomenon.
+
+Let's imagine a scenario whereby the cortex drive alone the ball most of the time until the target. then for fractions of seconds we unplug the cortex and only listen the cerrebellum imitating a period during which the cortex gives the wrong output (or no output). This could be because of lag or bad processing. (this scenario is not really realistic but it is a simplify setup. In the more sophisticated setup we will make the cortex outputting the wrong output and deal with the spinal chord activity such that the cerrebellum stear the behavior by compensating for the gap between good and wrong behavor). So yes the cortex is unplugged on for a fraction of second we only listen the cerrebellum. what I predict will happen is that the cerrebellum will be able to do what I call high dimensional dead reconning. By just reading the high dimensional activity comming from sensory/motor/proprioceptive and generating the right code for the IO to be inhibited, the cerrebellum will output the right code and the spinal chord will read from it the right way to produce during this short period of time the right behavior. This is also a form of interpolation if we think about it.
+So yes this is the first big part.
+
+Now for the gradient aligment phenomenon. It is a bit more subtile and has to do with cerrebellar on the fly rather fast plasticity. Here the cerrebellum not only predict the right code but the right code change, the right gradient.
+So lets take our previous example. We will no reproduce many time the same trajectory multiple time with the same starting point of the ball and the same target pit for the ball. lets imagine the system is driven by the cortex but the cortex has a lag, it relies on past data few milisecond before to compute the trajectory. This is not a problem if the target is still or the ball have predictible behavior as the cortex use the speed and accelleration and distance with the pit to compute the instantaneous drive. but let say that very close to the pit the ball has a twitch or the pit move a bit, reflecting that the cortex had a slightly wrong interpretation of the pit position (very probable). catastrophe, the ball miss the pit and it takes a bit of time for the cortex to correct the trajectory, if the pit stay still and the ball doesn't twitch anymore the ball stay will finally arrive in the pit but making a detour. Imagine a predator chasing a prey, this imprecision can cost this predator survival. But wait, something happened in the cerrebellum, a miss match between the DCN and the IO has occured for a few milisecond triggering a somewhat important plasticity event. the code has changed.
+Now let say we rerun exactly the same experiment, but now at the exact same moment we have the twitch or the pit position modifiction we listen the synapses comming from the DCN rather than the cortical synapses. What I expect is that the code change has corrected the behavior. The trajectory lands now way closer to the target. O
+
+PS: as a homework you can give a first approximation of the backprop happenning in the cerrebelum using only local plasticity rules, there are few stages and the local circuit have the necessary backward (IO->CC) to induce I think learning which is similar to the backprop used in my version. For CC to DCN I think a sophisticated habbian scheme and normalization should do the trick.
+
+PS final model :
+if we forget about listening only the cortex or only the cerrebellum which is artificial, what will be outputing the cortex is ALWAYS a laggy error signal  pointing toward the right direction but computed over more time steps. 
+of course listening the cerrebelar cortex at the right moment is artificial, but in the more achieved model, as said before, it would correspond to the cerrebellum drive to stear the cortex output toward its decision. What we want ideally is the code in the spinal chord to be driven by the cerebellum on short time scale but if the cerrebellum tells something wrong, to have the cortex being able on a longer time scale (more milliseconds,seconds) to activly stear back the spinal chord code toward the right position. Which make sens, the cerrebellum change the code quickly in a way that is impredictible by the cortex, but once the cortex is able to sens the deviation and compute it it push back toward the right direction. Actually it is pretty elegant, the cortex only feed the spinal chord an error signal that both stear in the right direction if after many milliseconds things are getting side ways and the cerrebellum is teached by this error signal. So when the cortex and the cerrebellum are ok, this is mostly the cerrebellum that drives, when they disagree, first the cerrebellum drive as the cortex doesn't have the time to express the disagreement , this is where the first fold error correction from the cerrebellum happens, then if the behavior is still wrong the cortex stear the system toward the right computed behavior.
+But I am not still certain on how to emulate the slow computation of the cortex.
